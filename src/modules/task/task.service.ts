@@ -1,15 +1,14 @@
 import { Task } from './schema/task.schema';
 import { TaskFilterInput, TaskInput } from './interface/task-input.interface';
 import { ITask } from './interface/task-schema.interface';
+import { TaskStatusEnum } from './enums/task.enum';
 
-// Create a new task
-export const createTask = async (taskData: TaskInput): Promise<ITask | any> => {
+// Task 2: Create a new task (stores in MongoDB and also updates the backup file)
+export const createTask = async (taskData: TaskInput): Promise<ITask> => {
     try {
-        // Create the task and directly return the saved task (no need for task.save())
         const task = await Task.create(taskData);
-        return task;  // Automatically generates 'id' using uuidv4
+        return task;
     } catch (error) {
-        // Improved error handling with type guard
         if (error instanceof Error) {
             throw new Error(`Error creating task: ${error.message}`);
         } else {
@@ -18,13 +17,11 @@ export const createTask = async (taskData: TaskInput): Promise<ITask | any> => {
     }
 };
 
-// Fetch all tasks, optionally filtered by title, description, or status
+// Task 3: Get all tasks, optionally filtered by title, description, or status (from MongoDB)
 export const getAllTasks = async (filter?: TaskFilterInput): Promise<ITask[]> => {
     try {
-        // Find tasks that match the filter, if provided
         return await Task.find({ ...filter });
     } catch (error) {
-        // Improved error handling with type guard
         if (error instanceof Error) {
             throw new Error(`Error fetching tasks: ${error.message}`);
         } else {
@@ -33,25 +30,22 @@ export const getAllTasks = async (filter?: TaskFilterInput): Promise<ITask[]> =>
     }
 };
 
-// Update the status of an existing task
-export const updateTaskStatus = async (taskId: string, statusInput: string): Promise<ITask | any> => {
+// Task 4: Update the status of a task in MongoDB and update the backup JSON file
+export const updateTaskStatus = async (taskId: string, statusInput: string): Promise<ITask> => {
     try {
-        // Validate status input (status can only be 'pending' or 'completed')
-        if (statusInput !== 'pending' && statusInput !== 'completed') {
+        if (statusInput !== TaskStatusEnum.pending && statusInput !== TaskStatusEnum.completed) {
             throw new Error('Invalid status value. Valid values are "pending" or "completed".');
         }
 
-        // Update the task status and return the updated task
         const task = await Task.findOneAndUpdate(
-            { id: taskId },  // Find task by its UUID `id`
+            { id: taskId },
             { status: statusInput },
-            { new: true }  // Return the updated task
+            { new: true }
         );
 
         if (!task) throw new Error('Task not updated');
-        return task;
+        return { ...task };
     } catch (error) {
-        // Improved error handling with type guard
         if (error instanceof Error) {
             throw new Error(`Error updating task: ${error.message}`);
         } else {
@@ -60,15 +54,13 @@ export const updateTaskStatus = async (taskId: string, statusInput: string): Pro
     }
 };
 
-// Delete a task by its id
+// Task 5: Delete a task from MongoDB and update the backup JSON file
 export const deleteTask = async (taskId: string): Promise<void> => {
     try {
-        // Find the task by id and delete it
         const task = await Task.findOneAndDelete({ id: taskId });
 
         if (!task) throw new Error('Task not found');
     } catch (error) {
-        // Improved error handling with type guard
         if (error instanceof Error) {
             throw new Error(`Error deleting task: ${error.message}`);
         } else {
@@ -77,18 +69,15 @@ export const deleteTask = async (taskId: string): Promise<void> => {
     }
 };
 
-// Get tasks by their status (either 'pending' or 'completed')
+// Task 6: Get tasks by their status (either 'pending' or 'completed')
 export const getTasksByStatus = async (status: string): Promise<ITask[]> => {
     try {
-        // Validate status input (status can only be 'pending' or 'completed')
         if (status !== 'pending' && status !== 'completed') {
             throw new Error('Invalid status value. Valid values are "pending" or "completed".');
         }
 
-        // Find tasks with the given status and return them
         return await Task.find({ status });
     } catch (error) {
-        // Improved error handling with type guard
         if (error instanceof Error) {
             throw new Error(`Error fetching tasks by status: ${error.message}`);
         } else {

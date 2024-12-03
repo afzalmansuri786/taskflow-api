@@ -1,7 +1,7 @@
 export interface TaskInput {
   title: string;
   description: string;
-  status?: string; // status is optional, defaults to 'pending'
+  status?: string;
 }
 
 export type TaskFilterInput = Partial<TaskInput>

@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Buy groceries",
+    "description": "Get milk, eggs, and bread",
+    "status": "pending",
+    "_id": "674f3da830c04269509ea8ba",
+    "id": "57ce4e6b-f15b-4d8a-9b0b-3f422485d9df",
+    "createdAt": "2024-12-03T17:19:36.811Z",
+    "updatedAt": "2024-12-03T17:19:36.811Z",
+    "__v": 0
+  },
+  {
+    "title": "Workout",
+    "description": "Go to the gym for 1 hour",
+    "status": "pending",
+    "_id": "674f3db230c04269509ea8bf",
+    "id": "be555849-94e3-4010-b46e-0a9dcc58cc43",
+    "createdAt": "2024-12-03T17:19:46.694Z",
+    "updatedAt": "2024-12-03T17:19:46.694Z",
+    "__v": 0
+  }
+]

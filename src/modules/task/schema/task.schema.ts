@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { TaskStatusEnum } from '../enums/task.enum';
 import { ITask } from '../interface/task-schema.interface';
 
-
 const taskSchema = new Schema<ITask>(
     {
         id: {
@@ -31,6 +30,16 @@ const taskSchema = new Schema<ITask>(
         timestamps: true
     }
 );
+
+taskSchema.set('toJSON', {
+    transform: (doc, modifiedDoc) => {
+        delete modifiedDoc._id;
+        delete modifiedDoc.createdAt;
+        delete modifiedDoc.updatedAt;
+        delete modifiedDoc.__v;
+        return modifiedDoc;
+    }
+});
 
 export const Task = mongoose.model<ITask>('Task', taskSchema);
 

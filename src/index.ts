@@ -1,7 +1,8 @@
+// Task 1: Setting Up the Express Server
 import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config()
-import taskRoutes from './modules/task/task.routes';
+import { taskRoutes } from './modules/task/task.routes';
 import { connectDB } from './configs/db.config';
 
 const app = express();

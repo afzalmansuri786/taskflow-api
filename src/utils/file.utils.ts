@@ -1,33 +1,21 @@
 import fs from 'fs';
 import path from 'path';
 
-export const tasksFilePath = path.join(__dirname, '../../persistent_data/tasks.json'); // Path to your tasks.json file
+const filepath = path.join(__dirname, '../../persistent_data/tasks.json');
 
-export const readTasksFromFile = (): Promise<any[]> => {
-    return new Promise((resolve, reject) => {
-        fs.readFile(tasksFilePath, 'utf-8', (err, data) => {
-            if (err) {
-                return reject('Error reading tasks file');
-            }
-            try {
-                const tasks = JSON.parse(data);
-                resolve(tasks);
-            } catch (error) {
-                reject('Error parsing tasks file');
-            }
-        });
-    });
+export const readTasksFromFile = async (): Promise<any[]> => {
+    try {
+        const data = await fs.promises.readFile(filepath, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        return [];
+    }
 };
 
-// Helper function to write tasks to the JSON file
-export const writeTasksToFile = (tasks: any[]): Promise<void> => {
-    return new Promise((resolve, reject) => {
-        fs.writeFile(tasksFilePath, JSON.stringify(tasks, null, 2), (err) => {
-            if (err) {
-                return reject('Error writing tasks to file');
-            }
-            resolve();
-        });
-    });
+export const writeTasksToFile = async (tasks: any[]): Promise<void> => {
+    try {
+        await fs.promises.writeFile(filepath, JSON.stringify(tasks, null, 2));
+    } catch (error) {
+        throw new Error('Error writing tasks to file');
+    }
 };
-

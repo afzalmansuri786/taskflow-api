@@ -1,11 +1,15 @@
 import { Request, Response } from 'express';
-import { createTask, deleteTask, getAllTasks, getTasksByStatus, updateTaskStatus } from './task.service1';
-// import { createTask, deleteTask, getAllTasks, getTasksByStatus, updateTaskStatus } from './task.service';
+import { createTask, deleteTask, getAllTasks, getTasksByStatus, updateTaskStatus } from './task-with-json-operation..service'; // with json file operations
+// import { createTask, deleteTask, getAllTasks, getTasksByStatus, updateTaskStatus } from './task.service'; // without json file operations
 import { TaskResponse } from './interface/task-responses.interface';
 
-export const createTaskController = async (req: Request, res: Response) => {
+export const createTaskControllerFunc = async (req: Request, res: Response) => {
     try {
         const { title, description } = req.body;
+
+        if (!title || !description) {
+            res.status(422).json({ error: "Missing title or description" })
+        }
         const newTask = await createTask({ title, description });
         const response: TaskResponse = {
             message: 'Task created successfully',
@@ -22,7 +26,7 @@ export const createTaskController = async (req: Request, res: Response) => {
     }
 };
 
-export const getAllTasksController = async (req: Request, res: Response) => {
+export const getAllTasksControllerFunc = async (req: Request, res: Response) => {
     try {
         const { title, description, status } = req.query;
 
@@ -48,15 +52,21 @@ export const getAllTasksController = async (req: Request, res: Response) => {
     }
 };
 
-export const updateTaskController = async (req: Request, res: Response) => {
+export const updateTaskControllerFunc = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
+        if (!id) {
+            res.status(422).json({ error: 'id is missing' });
+        }
         const { status } = req.body;
+        if (!status) {
+            res.status(422).json({ error: 'status is missing' });
+        }
         const updatedTask = await updateTaskStatus(id, status);
         const response: TaskResponse = {
             message: 'Task updated successfully',
             task: {
-                id: updatedTask._id,
+                id: updatedTask.id,
                 title: updatedTask.title,
                 description: updatedTask.description,
                 status: updatedTask.status,
@@ -68,9 +78,12 @@ export const updateTaskController = async (req: Request, res: Response) => {
     }
 };
 
-export const deleteTaskController = async (req: Request, res: Response) => {
+export const deleteTaskControllerFunc = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
+        if (!id) {
+            res.status(422).json({ error: 'id is missing' });
+        }
         await deleteTask(id);
         res.status(200).json({ message: 'Task deleted successfully' });
     } catch (error) {
@@ -78,9 +91,12 @@ export const deleteTaskController = async (req: Request, res: Response) => {
     }
 };
 
-export const getTasksByStatusController = async (req: Request, res: Response) => {
+export const getTasksByStatusControllerFunc = async (req: Request, res: Response) => {
     try {
         const { status } = req.params;
+        if (!status) {
+            res.status(422).json({ error: 'status is missing' });
+        }
         const tasks = await getTasksByStatus(status);
         res.status(200).json(tasks);
     } catch (error) {
